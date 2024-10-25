@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <style>
+      /* Body background inspired by Instagram-like style */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #1dbee2 0%,
+          #d749a8 25%,
+          #20bcb2 50%,
+          #23b2b9 75%,
+          #4ab0b9 100%
+        );
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* Header */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 20px;
+      }
+
+      .nav-left {
+        display: flex;
+        align-items: center;
+      }
+
+      .nav-left img {
+        width: 40px;
+        height: auto;
+        margin-right: 10px;
+      }
+
+      h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 24px;
+      }
+
+      /* Animated search input */
+      #search-input {
+        width: 100%;
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        font-size: 16px;
+        transition:
+          width 0.4s ease-in-out,
+          border-color 0.3s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+      }
+
+      #search-input:focus {
+        outline: none;
+        border-color: #7c5074;
+        box-shadow: 0 0 5px rgba(108, 151, 165, 0.5);
+      }
+
+      /* Search button style */
+      #search-btn {
+        padding: 12px;
+        background-color: #05675c;
+        border: none;
+        border-radius: 25px;
+        color: #ffffff;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      #search-btn:hover {
+        background-color: #1194a9;
+      }
+
+      h2 {
+        margin-top: 20px;
+        text-align: center;
+        color: #ffffff;
+      }
+
+      /* Results list styled like Instagram cards */
+      #results-list {
+        list-style: none;
+        padding: 0;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      #results-list li {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        transition: transform 0.2s;
+        cursor: pointer;
+      }
+
+      #results-list li:hover {
+        transform: translateY(-2px);
+      }
+
+      #results-list img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+      }
+
+      #results-list li span {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      #no-results {
+        text-align: center;
+        color: #ffffff;
+        margin-top: 10px;
+      }
+
+      /* Back button style */
+      #back-btn {
+        background-color: #085d7f;
+        border: none;
+        border-radius: 25px;
+        color: #ffffff;
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100px;
+        text-align: center;
+      }
+
+      #back-btn:hover {
+        background-color: #cc0000;
+      }
+
+      @media (max-width: 500px) {
+        #search-input {
+          padding: 10px;
+          width: 100%;
+        }
+
+        #search-btn {
+          padding: 10px;
+        }
+
+        #back-btn {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="nav-left">
+        <img src="/public/assets/logo.png" alt="Logo" class="logo" />
+        <h1>Online-Chat</h1>
+      </div>
+      <button id="back-btn" onclick="window.history.back();">Back</button>
+      <!-- Back button -->
+    </header>
+
+    <main>
+      <h1>Search</h1>
+      <input type="text" id="search-input" placeholder="Enter username..." />
+      <button id="search-btn">Search</button>
+      <h2 id="results-header" style="display: none"></h2>
+      <ul id="results-list"></ul>
+      <p id="no-results" style="display: none">No users found.</p>
+      <!-- Message for no results -->
+    </main>
+
+    <script>
+      document
+        .getElementById("search-btn")
+        .addEventListener("click", async () => {
+          const username = document.getElementById("search-input").value.trim();
+          const resultsList = document.getElementById("results-list");
+          const noResultsMessage = document.getElementById("no-results");
+          const resultsHeader = document.getElementById("results-header");
+
+          // Clear previous results
+          resultsList.innerHTML = "";
+          noResultsMessage.style.display = "none";
+          resultsHeader.style.display = "none";
+
+          // Fetch user data if the input is not empty
+          if (username) {
+            try {
+              console.log("Searching for username:", username); // Log the username being searched
+              const response = await fetch(
+                `/api/search?q=${encodeURIComponent(username)}`,
+              ); // Updated query parameter
+
+              if (!response.ok) {
+                const errorMessage = await response.text();
+                console.error("Fetch error:", response.status, errorMessage); // Log fetch errors
+                throw new Error(`Failed to fetch user data: ${errorMessage}`);
+              }
+
+              const results = await response.json();
+              console.log("Search results:", results); // Log the results received
+
+              // Check if any users were found
+              if (results && results.length > 0) {
+                resultsHeader.innerText = `Results for "${username}":`;
+                resultsHeader.style.display = "block"; // Show the results header
+                results.forEach((user) => {
+                  const li = document.createElement("li");
+
+                  // Add click event to redirect to user's profile
+                  li.addEventListener("click", () => {
+                    window.location.href = `/profile/${user._id}`; // Adjust the URL according to your routing
+                  });
+
+                  // Add a placeholder profile image for now
+                  const profileImg = document.createElement("img");
+                  profileImg.src =
+                    user.profileImage || "https://via.placeholder.com/50"; // Placeholder image URL
+                  li.appendChild(profileImg);
+
+                  const usernameSpan = document.createElement("span");
+                  usernameSpan.innerText = user.username; // Use a valid property from the API response
+                  li.appendChild(usernameSpan);
+
+                  resultsList.appendChild(li);
+                });
+              } else {
+                noResultsMessage.style.display = "block"; // Show "No users found" message
+              }
+            } catch (error) {
+              alert("An error occurred while fetching users: " + error.message);
+              console.error("Error during fetch:", error); // Log any errors caught
+            }
+          } else {
+            alert("Please enter a username to search.");
+          }
+        });
+    </script>
+  </body>
+</html>

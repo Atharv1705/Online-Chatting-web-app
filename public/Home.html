@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Welcome to Online Chat, a secure and friendly chat application."
+    />
+    <title>Home - Online Chat</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <style>
+      /* Base body styling */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f3f6fb;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      /* Navbar styling */
+      .navbar {
+        background: linear-gradient(45deg, #6c5ce7, #74b9ff);
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-left h1 {
+        font-size: 1.5rem;
+        margin: 0;
+        color: white;
+      }
+
+      .nav-right img {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .nav-right img:hover {
+        transform: scale(1.1);
+      }
+
+      /* Dashboard layout */
+      .dashboard {
+        display: flex;
+        height: 100%;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 240px;
+        background: #2d3436;
+        padding: 20px;
+        color: #dfe6e9;
+        box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar h3 {
+        margin: 0 0 20px;
+        font-size: 18px;
+        color: #ffffff;
+      }
+
+      .sidebar .nav-item {
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        color: #ffffff;
+        font-size: 1.1rem;
+        padding: 10px;
+        border-radius: 5px;
+        transition:
+          background 0.3s,
+          color 0.3s;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .sidebar .nav-item img {
+        width: 22px;
+        margin-right: 12px;
+      }
+
+      .sidebar .nav-item:hover {
+        background: #636e72;
+        color: white;
+      }
+
+      /* Main content area */
+      .content-area {
+        flex: 1;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        margin: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .content-area h2 {
+        font-size: 26px;
+        color: #2d3436;
+        margin-bottom: 20px;
+      }
+
+      .content-area .card {
+        background-color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        color: #2d3436;
+      }
+
+      /* Bottom navigation for mobile */
+      .bottom-nav {
+        display: none;
+      }
+
+      /* Responsive design for mobile */
+      @media (max-width: 768px) {
+        .dashboard {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .bottom-nav {
+          display: flex;
+          justify-content: space-around;
+          background: #6c5ce7;
+          color: white;
+          padding: 15px;
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+          box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .bottom-nav .nav-item img {
+          width: 30px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="nav-left">
+        <h1>Online Chat</h1>
+      </div>
+      <div class="nav-right">
+        <a href="profile.html" aria-label="Profile">
+          <img src="/public/assets/new-profile-icon.png" alt="Profile" />
+        </a>
+      </div>
+    </header>
+
+    <div class="dashboard">
+      <!-- Sidebar (left navigation) -->
+      <nav class="sidebar">
+        <h3>Dashboard</h3>
+        <a href="chat.html" class="nav-item"
+          ><img src="/public/assets/chat_icon.png" alt="" /> Chat</a
+        >
+        <a href="search.html" class="nav-item"
+          ><img src="/public/assets/search_icon.png" alt="" /> Search</a
+        >
+        <a href="settings.html" class="nav-item"
+          ><img src="/public/assets/settings_icon.png" alt="" /> Settings</a
+        >
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="content-area">
+        <h2>Welcome to Online Chat!</h2>
+        <div class="card">
+          <p>Select an option from the sidebar to start chatting.</p>
+        </div>
+      </main>
+
+      <!-- Bottom Navigation (for mobile) -->
+      <nav class="bottom-nav">
+        <a href="index.html" class="nav-item"
+          ><img src="/public/assets/home_icon.png" alt="Home" /> Home</a
+        >
+        <a href="chat.html" class="nav-item"
+          ><img src="/public/assets/chat_icon.png" alt="Chat" /> Chat</a
+        >
+        <a href="search.html" class="nav-item"
+          ><img src="/public/assets/search_icon.png" alt="Search" /> Search</a
+        >
+        <a href="settings.html" class="nav-item"
+          ><img src="/public/assets/settings_icon.png" alt="Settings" />
+          Settings</a
+        >
+      </nav>
+    </div>
+  </body>
+</html>

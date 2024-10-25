@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Settings</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Background styling */
+      body {
+        font-family: "Arial", sans-serif;
+        background:
+          url("public/assets/Setting.png") no-repeat center center fixed,
+          linear-gradient(to right, #00b09b, #96c93d);
+        background-size: cover;
+        color: #333;
+      }
+
+      .profile-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        max-width: 450px;
+        width: 90%;
+        text-align: center;
+        margin: 60px auto;
+        backdrop-filter: blur(8px);
+      }
+
+      .profile-info {
+        margin-bottom: 25px;
+      }
+
+      .profile-info h2 {
+        margin-bottom: 10px;
+        font-size: 26px;
+        color: #333;
+      }
+
+      .profile-info p {
+        font-size: 18px;
+        color: #666;
+      }
+
+      .profile-actions {
+        margin: 25px 0;
+      }
+
+      .profile-actions label {
+        display: block;
+        margin: 15px 0 5px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .profile-actions select,
+      .profile-actions button {
+        padding: 12px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        width: 100%;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .profile-actions select:hover,
+      .profile-actions button:hover {
+        border-color: #007bff;
+      }
+
+      .profile-actions button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      .profile-actions button:hover {
+        background-color: #0056b3;
+      }
+
+      /* Notification Styles */
+      #notification {
+        display: none;
+        background-color: #f8d7da; /* Change this to #d4edda for success messages */
+        color: #721c24; /* Change this to #155724 for success messages */
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        animation:
+          fadeIn 0.5s ease,
+          fadeOut 0.5s ease 3s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      #back-btn {
+        background-color: #ff4d4d;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin: 15px 0;
+        width: 80px;
+      }
+
+      #back-btn:hover {
+        background-color: #cc0000;
+      }
+
+      #delete-account {
+        background-color: #dc3545;
+      }
+
+      #delete-account:hover {
+        background-color: #c82333;
+      }
+
+      /* Modal Styles */
+      #delete-modal,
+      #logout-modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        transition: opacity 0.3s ease; /* Smooth transition */
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        text-align: center;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.3s; /* Fade-in effect */
+      }
+
+      .modal-content h2 {
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .modal-content button {
+        margin: 10px 5px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .modal-content button:hover {
+        opacity: 0.8;
+      }
+
+      /* Accessibility */
+      #delete-modal[aria-hidden="true"],
+      #logout-modal[aria-hidden="true"] {
+        display: none; /* Hide modal if not visible */
+      }
+    </style>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="nav-left">
+        <img src="public/assets/logo.png" alt="Logo" class="logo" />
+        <h1>Online-Chat</h1>
+      </div>
+    </header>
+
+    <button id="back-btn" onclick="window.history.back();">Back</button>
+
+    <div class="profile-container">
+      <div class="profile-info">
+        <h2 id="username">Username</h2>
+        <p id="email">email</p>
+      </div>
+
+      <div id="notification"></div>
+
+      <form id="profile-form">
+        <div class="profile-actions">
+          <label for="theme">Select Theme:</label>
+          <select id="theme" onchange="changeTheme()">
+            <option value="default">Default</option>
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+
+          <label for="privacy">Account Privacy:</label>
+          <select id="privacy" onchange="changePrivacy()">
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+
+          <button type="button" id="logout-btn">Log Out</button>
+          <button type="button" id="delete-account">Delete Account</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal for account deletion confirmation -->
+    <div id="delete-modal" aria-hidden="true">
+      <div class="modal-content">
+        <h2>Confirm Account Deletion</h2>
+        <p id="modal-message"></p>
+        <button id="confirm-delete">Yes, Delete My Account</button>
+        <button id="cancel-delete">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Modal for logout confirmation -->
+    <div id="logout-modal" aria-hidden="true">
+      <div class="modal-content">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to log out?</p>
+        <button id="confirm-logout">Yes, Log Me Out</button>
+        <button id="cancel-logout">Cancel</button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        await fetchUserDetails();
+        setupEventListeners();
+      });
+
+      async function fetchUserDetails() {
+        try {
+          const response = await fetch("/api/settings", {
+            method: "GET",
+            credentials: "include",
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch user details");
+          }
+
+          const data = await response.json();
+          if (data) {
+            document.getElementById("username").innerText = data.username;
+            document.getElementById("email").innerText = data.email;
+          } else {
+            console.error("User not found");
+          }
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+        }
+      }
+
+      function setupEventListeners() {
+        document.getElementById("logout-btn").addEventListener("click", () => {
+          document.getElementById("logout-modal").style.display = "block";
+        });
+
+        document
+          .getElementById("confirm-logout")
+          .addEventListener("click", logoutUser);
+        document
+          .getElementById("cancel-logout")
+          .addEventListener("click", () => {
+            document.getElementById("logout-modal").style.display = "none";
+          });
+
+        document
+          .getElementById("delete-account")
+          .addEventListener("click", () => {
+            document.getElementById("delete-modal").style.display = "block";
+          });
+
+        document
+          .getElementById("confirm-delete")
+          .addEventListener("click", deleteAccount);
+        document
+          .getElementById("cancel-delete")
+          .addEventListener("click", () => {
+            document.getElementById("delete-modal").style.display = "none";
+          });
+      }
+
+      async function deleteAccount() {
+        try {
+          const response = await fetch("/api/delete", {
+            method: "DELETE",
+            credentials: "include",
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            showNotification("Account successfully deleted.", "success");
+            window.location.href = "/login";
+          } else {
+            showNotification(
+              "Failed to delete account: " + result.message,
+              "error",
+            );
+          }
+        } catch (error) {
+          console.error("Error deleting account:", error);
+          showNotification("Failed to delete account.", "error");
+        } finally {
+          document.getElementById("delete-modal").style.display = "none"; // Hide modal
+        }
+      }
+
+      async function logoutUser() {
+        try {
+          const response = await fetch("/api/logout", {
+            method: "POST",
+            credentials: "include",
+          });
+
+          if (response.ok) {
+            window.location.href = "/login";
+          } else {
+            console.error("Failed to log out");
+            showNotification("Failed to log out.", "error");
+          }
+        } catch (error) {
+          console.error("Error logging out:", error);
+          showNotification("Failed to log out.", "error");
+        } finally {
+          document.getElementById("logout-modal").style.display = "none"; // Hide modal
+        }
+      }
+
+      function showNotification(message, type) {
+        const notification = document.getElementById("notification");
+        notification.innerText = message;
+        notification.style.display = "block";
+        notification.style.backgroundColor =
+          type === "success" ? "#d4edda" : "#f8d7da";
+        notification.style.color = type === "success" ? "#155724" : "#721c24";
+        setTimeout(() => {
+          notification.style.display = "none";
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background:
+    url("assets/background_image.png") no-repeat center center fixed,
+    linear-gradient(to right, #00b09b, #96c93d); /* Updated background */
+  background-size: cover, cover;
+}
+
+/* Container with Backdrop Blur Effect */
+.container {
+  background: rgba(
+    255,
+    255,
+    255,
+    0.9
+  ); /* Increased opacity for better visibility */
+  backdrop-filter: blur(10px); /* Adds blur effect */
+  padding: 40px; /* Increased padding for more spacing */
+  border-radius: 15px; /* More rounded corners */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); /* Adjusted shadow for depth */
+  max-width: 450px; /* Increased max-width for larger screens */
+  width: 90%; /* Responsive width */
+  text-align: center;
+  transition:
+    backdrop-filter 0.3s ease,
+    transform 0.3s; /* Added transform for hover effect */
+}
+
+.container:hover {
+  backdrop-filter: blur(15px); /* Enhance the blur effect on hover */
+  transform: scale(1.02); /* Slight scaling effect on hover */
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 30px; /* Increased font size for the heading */
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); /* Light shadow for contrast */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 16px; /* Increased font size for better readability */
+  color: #333;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+input {
+  padding: 14px; /* Increased padding for comfort */
+  margin-bottom: 15px;
+  border-radius: 8px; /* More rounded input corners */
+  border: 1px solid #ccc;
+  font-size: 16px;
+  transition:
+    border 0.3s,
+    box-shadow 0.3s; /* Added box-shadow transition */
+}
+
+input:focus {
+  border: 2px solid #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
+  outline: none;
+}
+
+button {
+  padding: 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px; /* More rounded button corners */
+  cursor: pointer;
+  font-size: 16px;
+  transition:
+    background-color 0.3s,
+    transform 0.3s; /* Added transform transition */
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+p {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #333;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Error and Success Message Styling */
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: left; /* Align error messages to the left */
+}
+
+.success-message {
+  color: green;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: left; /* Align success messages to the left */
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 600px) {
+  h2 {
+    font-size: 24px; /* Smaller font size on smaller screens */
+  }
+
+  .container {
+    padding: 20px; /* Adjust padding for smaller screens */
+  }
+
+  input,
+  button {
+    font-size: 14px; /* Slightly smaller font for inputs and buttons */
+  }
+}

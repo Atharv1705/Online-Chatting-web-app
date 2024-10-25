@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Arial:400,700&display=swap"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Arial", sans-serif;
+        background:
+          url("assets/background_image.png") no-repeat center center fixed,
+          linear-gradient(to right, #00b09b, #96c93d);
+        background-size: cover, cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #fff;
+      }
+      .login-container {
+        background: rgba(255, 255, 255, 0.7);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+      }
+      .login-container h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+      }
+      .login-container form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 5px;
+        text-align: left;
+      }
+      input {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        transition: border 0.3s;
+      }
+      input:focus {
+        border: 2px solid #007bff;
+        outline: none;
+      }
+      button {
+        padding: 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .login-container p {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #333;
+      }
+      .login-container a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      .login-container a:hover {
+        text-decoration: underline;
+      }
+      .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+      .loading {
+        color: #007bff;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Enter your username"
+          required
+        />
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+
+        <button type="submit">Login</button>
+      </form>
+      <div id="error" class="error-message"></div>
+      <div id="loading" class="loading" style="display: none">
+        Logging in...
+      </div>
+      <p>Don't have an account? <a href="/register">Sign-Up</a></p>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const username = document.getElementById("username").value.trim();
+          const password = document.getElementById("password").value;
+          const errorDiv = document.getElementById("error");
+          const loadingDiv = document.getElementById("loading");
+
+          errorDiv.textContent = ""; // Clear previous errors
+          loadingDiv.style.display = "block"; // Show loading message
+
+          try {
+            const response = await fetch("/api/auth/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password }),
+            });
+
+            loadingDiv.style.display = "none"; // Hide loading message
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.redirectUrl) {
+                window.location.href = result.redirectUrl; // Redirect on successful login
+              } else {
+                errorDiv.textContent = "Unexpected response from the server.";
+              }
+            } else {
+              const result = await response.json();
+              errorDiv.textContent =
+                result.message || "An error occurred. Please try again.";
+            }
+          } catch (error) {
+            loadingDiv.style.display = "none"; // Hide loading message
+            errorDiv.textContent =
+              "Network error. Please check your connection.";
+            console.error("Error during login:", error);
+          }
+        });
+    </script>
+  </body>
+</html>

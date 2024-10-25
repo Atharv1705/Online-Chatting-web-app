@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO Chat</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Set a background image and style */
+      body {
+        font-family: "Arial", sans-serif;
+        background: url("https://source.unsplash.com/random/1920x1080")
+          no-repeat center center fixed;
+        background-size: cover;
+        color: #fff;
+        transition: background 0.5s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      #login {
+        width: 100%;
+        max-width: 600px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        text-align: center;
+      }
+
+      #login input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        transition: border 0.3s;
+      }
+
+      #login input:focus {
+        border: 2px solid #0056b3;
+        outline: none;
+      }
+
+      #start-chat {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-size: 16px;
+      }
+
+      #start-chat:hover {
+        background-color: #0056b3;
+      }
+
+      /* Chat container style */
+      #chat-container {
+        display: none; /* Hidden initially */
+        width: 100%;
+        max-width: 600px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        text-align: center;
+        overflow-y: auto;
+        height: 400px; /* Set a height for the chat container */
+      }
+
+      #messages {
+        list-style-type: none;
+        padding: 0;
+        max-height: 300px; /* Set a max height for messages area */
+        overflow-y: auto; /* Allow scrolling */
+        margin-bottom: 10px;
+      }
+
+      .message {
+        margin: 5px 0;
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #e0e0e0;
+        color: #333;
+      }
+
+      .user-message {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-end; /* Align user's messages to the right */
+      }
+
+      /* Input for message sending */
+      #message-input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+
+      #send-message {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-size: 16px;
+      }
+
+      #send-message:hover {
+        background-color: #0056b3;
+      }
+
+      /* Flex container for messages */
+      #message-area {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login">
+      <h2>Welcome to the Chat</h2>
+      <input id="username" placeholder="Enter your username" />
+      <input id="avatar" placeholder="Enter your avatar URL" />
+      <button id="start-chat">Start Chat</button>
+    </div>
+
+    <div id="chat-container">
+      <h2>Chat Room</h2>
+      <ul id="messages"></ul>
+      <div id="message-area">
+        <input id="message-input" placeholder="Type your message here..." />
+        <button id="send-message">Send</button>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      const socket = io();
+      let username;
+
+      // User login
+      $("#start-chat").on("click", () => {
+        username = $("#username").val();
+        const avatar = $("#avatar").val() || "https://via.placeholder.com/30"; // Default avatar
+        socket.emit("set username", { username, avatar });
+        $("#login").hide();
+        $("#chat-container").show(); // Show chat container
+        $("#username").val("");
+        $("#avatar").val("");
+      });
+
+      // Send message
+      $("#send-message").on("click", () => {
+        const message = $("#message-input").val();
+        if (message) {
+          socket.emit("sendMessage", { user: username, message });
+          $("#message-input").val(""); // Clear input
+        }
+      });
+
+      // Receive message
+      socket.on("receiveMessage", (data) => {
+        $("#messages").append(
+          `<li class="message user-message">${data.user}: ${data.message}</li>`,
+        );
+      });
+    </script>
+  </body>
+</html>

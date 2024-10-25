@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Background styling */
+      body {
+        font-family: "Arial", sans-serif;
+        background: url("assets/background_image.png") no-repeat center center
+          fixed;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #fff;
+      }
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 0;
+      }
+
+      .register-container {
+        position: relative;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+        width: 100%;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        text-align: center;
+        z-index: 1;
+      }
+
+      .register-container h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+      }
+
+      .register-container form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      label {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 5px;
+        text-align: left;
+      }
+
+      input {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        transition: border 0.3s;
+      }
+
+      input:focus {
+        border: 2px solid #007bff;
+        outline: none;
+      }
+
+      input:hover {
+        border: 1px solid #007bff; /* Change border color on hover */
+      }
+
+      button {
+        padding: 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .register-container p {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .register-container a {
+        color: #007bff;
+        text-decoration: none;
+      }
+
+      .register-container a:hover {
+        text-decoration: underline;
+      }
+
+      /* Error message styling */
+      .error-message {
+        color: red;
+        font-size: 14px;
+        margin-bottom: 10px;
+        display: none;
+      }
+
+      /* Password guidelines */
+      .password-guidelines {
+        font-size: 12px;
+        color: #555;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay"></div>
+    <!-- Dark overlay background -->
+    <div class="register-container">
+      <h2>Sign Up</h2>
+
+      <!-- Error message display -->
+      <div
+        id="error-message"
+        class="error-message"
+        role="alert"
+        aria-live="assertive"
+      ></div>
+
+      <form id="register-form" action="/register" method="POST">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Enter your username"
+          required
+          autocomplete="username"
+          aria-required="true"
+          aria-describedby="username-help"
+        />
+
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your Email address"
+          required
+          autocomplete="email"
+          aria-required="true"
+          aria-describedby="email-help"
+        />
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+          autocomplete="new-password"
+          aria-required="true"
+          aria-describedby="password-help"
+        />
+        <div class="password-guidelines" id="password-help">
+          Password must be at least 8 characters long, contain one uppercase
+          letter, one lowercase letter, one number, and one special character.
+        </div>
+
+        <label>
+          <input type="checkbox" id="show-password" /> Show Password
+        </label>
+
+        <button type="submit">Sign Up</button>
+      </form>
+
+      <p>Already have an account? <a href="/login">Login here</a></p>
+    </div>
+
+    <script>
+      // Show/hide password functionality
+      const showPasswordCheckbox = document.getElementById("show-password");
+      const passwordInput = document.getElementById("password");
+
+      showPasswordCheckbox.addEventListener("change", function () {
+        passwordInput.type = this.checked ? "text" : "password";
+      });
+
+      document.getElementById("register-form").onsubmit = async function (
+        event,
+      ) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const errorMessage = document.getElementById("error-message");
+
+        // Validate required fields
+        if (!username || !email || !password) {
+          errorMessage.textContent = "All fields are required.";
+          errorMessage.style.display = "block";
+          return;
+        }
+
+        // Updated username validation: At least one uppercase letter, one special character, no spaces, and length of at least 3 characters
+        const usernameRegex =
+          /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?!.*\s)[A-Za-z\d!@#$%^&*_]{3,}$/;
+
+        if (!usernameRegex.test(username)) {
+          errorMessage.textContent =
+            "Username must contain at least one uppercase letter, one special character, no spaces, and be at least 3 characters long.";
+          errorMessage.style.display = "block";
+          return;
+        }
+
+        // Updated password validation: At least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character
+        const passwordRegex =
+          /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
+        if (!passwordRegex.test(password)) {
+          errorMessage.textContent =
+            "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character.";
+          errorMessage.style.display = "block";
+          return;
+        }
+
+        errorMessage.style.display = "none"; // Hide error if validation passes
+
+        // Prepare data for submission
+        const formData = new FormData(this);
+        try {
+          const response = await fetch(this.action, {
+            method: this.method,
+            body: formData,
+          });
+
+          if (!response.ok) {
+            errorMessage.textContent = `Error: ${response.status} ${response.statusText}`;
+            errorMessage.style.display = "block";
+            return;
+          }
+
+          const data = await response.json();
+          if (!data.success) {
+            errorMessage.textContent = data.message; // Display error message from server
+            errorMessage.style.display = "block";
+          } else {
+            window.location.href = "/login"; // Redirect to login page on success
+          }
+        } catch (error) {
+          errorMessage.textContent =
+            "An error occurred. Please try again later."; // Generic error message
+          errorMessage.style.display = "block";
+        }
+      };
+    </script>
+  </body>
+</html>

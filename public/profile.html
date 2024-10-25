@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Settings</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #fafafa;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 24px;
+        color: #262626;
+        font-weight: 400;
+      }
+
+      #settings-form {
+        max-width: 500px;
+        margin: 40px auto;
+        background: #fff;
+        border: 1px solid #dbdbdb;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      #settings-form:hover {
+        transform: translateY(-2px);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #262626;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        font-size: 14px;
+        background-color: #fafafa;
+        transition: border-color 0.3s;
+      }
+
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      input[type="password"]:focus {
+        border-color: #a8a8a8;
+        outline: none;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #3897f0;
+        border: none;
+        border-radius: 4px;
+        color: #ffffff;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background-color: #318bdb;
+      }
+
+      #feedback {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 14px;
+        color: #3897f0;
+      }
+
+      .secondary-button {
+        background-color: #efefef;
+        color: #262626;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .secondary-button:hover {
+        background-color: #e0e0e0;
+      }
+
+      .center {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .profile-stats {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .stat {
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .stat span {
+        display: block;
+        font-weight: normal;
+        color: #8e8e8e;
+      }
+
+      @media (max-width: 600px) {
+        #settings-form {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Edit Profile</h1>
+    <form id="settings-form">
+      <div class="profile-stats">
+        <div class="stat">
+          <span id="follower-count">0</span>
+          Followers
+        </div>
+        <div class="stat">
+          <span id="following-count">0</span>
+          Following
+        </div>
+      </div>
+
+      <!-- Follow/Unfollow Button -->
+      <button type="button" id="follow-btn">Follow</button>
+
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="bio">Bio:</label>
+      <input
+        type="text"
+        id="bio"
+        name="bio"
+        placeholder="Tell us about yourself..."
+      />
+
+      <label for="password">New Password:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Leave blank to keep current password"
+      />
+
+      <button type="submit">Submit</button>
+      <button
+        type="button"
+        class="secondary-button"
+        onclick="location.href='/home';"
+      >
+        Cancel
+      </button>
+    </form>
+    <div id="feedback"></div>
+
+    <script>
+      // Load user profile on page load
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const response = await fetch("/settings");
+          if (!response.ok) throw new Error("Failed to load profile data.");
+
+          const userProfile = await response.json();
+          document.getElementById("username").value = userProfile.username;
+          document.getElementById("email").value = userProfile.email;
+          document.getElementById("bio").value = userProfile.bio || "";
+          document.getElementById("follower-count").innerText =
+            userProfile.followersCount || 0;
+          document.getElementById("following-count").innerText =
+            userProfile.followingCount || 0;
+
+          // Update follow/unfollow button text
+          const followBtn = document.getElementById("follow-btn");
+          followBtn.innerText = userProfile.isFollowing ? "Unfollow" : "Follow";
+        } catch (error) {
+          console.error("Error loading user settings:", error);
+          document.getElementById("feedback").innerText =
+            "Failed to load user settings.";
+          document.getElementById("feedback").style.color = "red";
+        }
+      });
+
+      // Handle follow/unfollow button click
+      document
+        .getElementById("follow-btn")
+        .addEventListener("click", async () => {
+          const followBtn = document.getElementById("follow-btn");
+          const isFollowing = followBtn.innerText === "Unfollow";
+
+          try {
+            const response = await fetch(
+              `/profile/${isFollowing ? "unfollow" : "follow"}`,
+              {
+                method: isFollowing ? "DELETE" : "POST",
+              },
+            );
+
+            if (!response.ok)
+              throw new Error("Failed to update follow status.");
+
+            // Update button text and follower count
+            followBtn.innerText = isFollowing ? "Follow" : "Unfollow";
+            const followerCount = document.getElementById("follower-count");
+            followerCount.innerText =
+              parseInt(followerCount.innerText) + (isFollowing ? -1 : 1);
+          } catch (error) {
+            console.error("Error following/unfollowing user:", error);
+            document.getElementById("feedback").innerText =
+              "Error updating follow status.";
+            document.getElementById("feedback").style.color = "red";
+          }
+        });
+
+      // Handle form submission
+      document
+        .getElementById("settings-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("username").value;
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const bio = document.getElementById("bio").value;
+
+          const userData = {
+            username,
+            email,
+            bio,
+          };
+          if (password) {
+            userData.password = password;
+          }
+
+          try {
+            const response = await fetch("/api/profile/update", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(userData),
+            });
+
+            const feedback = document.getElementById("feedback");
+            if (response.ok) {
+              feedback.innerText = "Profile updated successfully!";
+              feedback.style.color = "green";
+            } else {
+              const errorData = await response.json();
+              feedback.innerText =
+                errorData.message || "Error updating profile.";
+              feedback.style.color = "red";
+            }
+          } catch (error) {
+            console.error("Error updating profile:", error);
+            document.getElementById("feedback").innerText =
+              "Error updating profile.";
+            document.getElementById("feedback").style.color = "red";
+          }
+        });
+    </script>
+  </body>
+</html>
